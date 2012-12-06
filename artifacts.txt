@@ -1,0 +1,10 @@
+-- WSAW1360 Dec '12 -----------------------
+BL1028	BL1028	Change error message
+
+
+
+
+
+
+e.g., 
+ShortlStoryID<tab>StoryID_used<tab>Description
