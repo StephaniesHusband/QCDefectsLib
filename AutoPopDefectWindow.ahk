@@ -4,23 +4,34 @@
 ; Customizable Values
 ;-----------------------------
 ; Change this to whatever icon you want to use or comment it out for default AutoHotKey icon
-Menu, Tray, Icon, Plog.icon
+Menu, Tray, Icon, Plog.ico
 
-Global QC_TITLE   := "Defect Details"
+T_DEF_DETAILS = Defect Details
+T_COMMIT      = Commit
+
+; Add the variable defined above into the group of windows to wait for
+GroupAdd, waitOnThese, %T_DEF_DETAILS%
+GroupAdd, waitOnThese, %T_COMMIT%
 ;-----------------------------
 ; END Customizable Values
 ;-----------------------------
 
 Loop
 {
-   ; Wait for the Defect Details dialog
-   WinWaitActive, %QC_TITLE%, 
+   WinWaitActive, ahk_group waitOnThese
 
-   ; Pop up the defectwindow
-   Run, DefectWindow.ahk
+   IfWinActive, %T_DEF_DETAILS%
+   {
+      Run, DefectWindow.ahk
 
-   ; wait for it to close
-   WinWaitClose, %QC_TITLE%
+      WinWaitClose
+      Continue
+   }
+   IfWinActive, %T_COMMIT%
+   {
+      Run, artifact_picker.ahk
 
-   ; do it again...
+      WinWaitClose
+      Continue
+   }
 }
