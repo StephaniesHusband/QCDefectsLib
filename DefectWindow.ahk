@@ -1,16 +1,17 @@
 #SingleInstance force
+
 ;-----------------------------
 ; Customizable Values
 ;-----------------------------
-PLANNED_CLOSING_VERSION:="WSAW1360.HS.L6.01" ; see sandy for this arbitrary made-up number!!
-TARGET_TEST_CYCLE:="Sprint 4" ; Marketing's S14 is our WSAW1360.S3
+ASSIGNED_TO_VERSION:="WSAW1380"
+PLANNED_CLOSING_VERSION=%ASSIGNED_TO_VERSION%.S2.L3.01 ; see sandy for this arbitrary made-up number!!
+TARGET_TEST_CYCLE:="Sprint 2" ; Marketing's S14 is our WSAW1360.S3
 RETURNED_STATUS:="Returned"
 RETURNED_TEAM_ASSIGNED:="WSAW-SQA-Testing"
 ;-----------------------------
 ; END Customizable section
 ;-----------------------------
 
-; Should be in same directory as this script
 #Include QCDefectsLib.ahk
 
 ; Wait for the Defect Details dialog
@@ -30,7 +31,7 @@ Gui, Add, Button, Default, Reassign
 Gui, Add, Button, , Return It
 Gui, Add, Button, , Close All
 
-; populate employee numbers - file should be in same folder as this script
+; populate employee numbers
 Loop, read, EmpNums.txt
 {
    GuiControl,, lbEmpNums, %A_LoopReadLine%        
@@ -71,7 +72,7 @@ return
 ;---------------------------------------------------------------------------------------------------
 ButtonMarkAsFixed:
 Gui, Submit
-Run, AutoHotkey.exe FixDefect.ahk %PlannedClosingVersion% "%TARGET_TEST_CYCLE%"
+Run, AutoHotkey.exe FixDefect.ahk %PlannedClosingVersion% "%TARGET_TEST_CYCLE%" %ASSIGNED_TO_VERSION%
 ExitApp
 return
 

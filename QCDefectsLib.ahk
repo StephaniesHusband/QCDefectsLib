@@ -10,9 +10,6 @@ Global TAB_APP   := "Approvals"
 Global TAB_CINFO := "Closing Info"
 Global TAB_RES   := "Resolution"
 Global TAB_TCOM  := "Test Comments"
-
-Global QC_TITLE := "HP Application Lifecycle Management"
-
 ;-----------------------------
 ; END Customizable section
 ;-----------------------------
@@ -25,16 +22,6 @@ WaitForQCMain()
    WinWait, %title%
    IfWinNotActive, %title%, , WinActivate, %title%, 
    WinWaitActive, %title%, 
-}
-
-FindDefect(defect)
-{
-   WaitForQCMain()
-   MouseClick, left, 106, 190
-   Send, !g
-   Sleep, 500
-
-   SendInput, %defect%{ENTER}
 }
 
 WaitForDefectDlg()

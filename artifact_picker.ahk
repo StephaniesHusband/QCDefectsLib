@@ -3,7 +3,7 @@
 ;-----------------------------
 ; Customizable Values
 ;-----------------------------
-ARTIFACTS_FILENAME=artifacts.txt ; needs to be in same directory as this script
+ARTIFACTS_FILENAME=artifacts.txt
 COMMIT_TITLE=Commit
 HEIGHT=200
 LISTBOX_WIDTH=400
