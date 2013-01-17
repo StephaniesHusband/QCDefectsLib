@@ -1,13 +1,14 @@
 ;-----------------------------
 ; Customizable Values
 ;-----------------------------
-PLANNED_CLOSING_VERSION=%1%
-TARGET_TEST_CYCLE=%2%
-ASSIGNED_TO_VERSION=%3%
-STATUS:="Fixed"
-DEFECT_TYPE:="Software:Code"
-ROOT_CAUSE_TEAM:="WSAW-Dev"
-RESOLUTION:="UT:{SPACE}Y{RETURN}UT Passed:{SPACE}Y{RETURN}Cause:{SPACE}{RETURN}Resolution:{SPACE}"
+PLANNED_CLOSING_VERSION = %1%
+TARGET_TEST_CYCLE       = %2%
+ASSIGNED_TO_VERSION     = %3%
+STATUS                  := "Fixed"
+DEFECT_TYPE             := "Software:Code"
+ROOT_CAUSE_TEAM         := "WSAW-Dev"
+RESOLUTION              := "UT:{SPACE}Y{RETURN}UT Passed:{SPACE}Y{RETURN}Cause:{SPACE}{RETURN}Resolution:{SPACE}"
+DEFECT_PREFIX           := "QC-CD "
 ;-----------------------------
 ; END Customizable section
 ;-----------------------------
@@ -24,7 +25,7 @@ WaitForDefectDlg()
 d := ClipDefectNumber()
 
 ; formulate a string we can put in cvs comments
-clipboard=QC-CD %d% - 
+clipboard=%DEFECT_PREFIX%%d% 
 
 ; Details tab
 SetDefectStatus(STATUS)
