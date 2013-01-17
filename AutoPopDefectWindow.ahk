@@ -29,7 +29,7 @@ Loop
    }
    IfWinActive, %T_COMMIT%
    {
-      Run, artifact_picker.ahk
+      Run, ArtifactPicker.ahk
 
       WinWaitClose
       Continue
