@@ -174,3 +174,14 @@ SetResolution(res)
    SendInput, %res%
    Sleep, STEP_SLEEP
 }
+
+FindDefect(defectNum)
+{
+   WaitForQCMain()
+
+   MouseClick, left, 106, 190
+   Send, !g
+   Sleep, STEP_SLEEP
+
+   SendInput, %defectNum%{ENTER}
+}
