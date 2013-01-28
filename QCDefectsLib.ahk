@@ -1,15 +1,23 @@
 ;-----------------------------
 ; Customizable Values
 ;-----------------------------
-Global QC_TITLE   := "Defect Details"
+; Stand-alone QC app title = "HP Application Lifecycle Management"
+; Browser QC app title = "HP ALM - Quality Center 11.00" (NOTE: could vary by browser)
+Global QC_TITLE   := "HP Application Lifecycle Management"
+
+; How long to wait in between steps (in milliseconds)
 Global STEP_SLEEP := 800
 
-Global TAB_DET   := "Details"
-Global TAB_AINFO := "Additional Info"
-Global TAB_APP   := "Approvals"
-Global TAB_CINFO := "Closing Info"
-Global TAB_RES   := "Resolution"
-Global TAB_TCOM  := "Test Comments"
+; Defect Details dialog name (should not vary)
+Global QC_DETAILS := "Defect Details"
+
+; Tab names in the Defect Details dialog (should not vary)
+Global TAB_DET    := "Details"
+Global TAB_AINFO  := "Additional Info"
+Global TAB_APP    := "Approvals"
+Global TAB_CINFO  := "Closing Info"
+Global TAB_RES    := "Resolution"
+Global TAB_TCOM   := "Test Comments"
 ;-----------------------------
 ; END Customizable section
 ;-----------------------------
@@ -18,17 +26,16 @@ Global TAB_TCOM  := "Test Comments"
 
 WaitForQCMain()
 {
-   title := "HP Application Lifecycle Management"
-   WinWait, %title%
-   IfWinNotActive, %title%, , WinActivate, %title%, 
-   WinWaitActive, %title%, 
+   WinWait, %QC_TITLE%
+   IfWinNotActive, %QC_TITLE%, , WinActivate, %QC_TITLE%, 
+   WinWaitActive, %QC_TITLE%, 
 }
 
 WaitForDefectDlg()
 {
-   WinWait, %QC_TITLE%
-   IfWinNotActive, %QC_TITLE%, , WinActivate, %QC_TITLE%, 
-   WinWaitActive, %QC_TITLE%, 
+   WinWait, %QC_DETAILS%
+   IfWinNotActive, %QC_DETAILS%, , WinActivate, %QC_DETAILS%, 
+   WinWaitActive, %QC_DETAILS%, 
 }
 
 ClipDefectNumber()
