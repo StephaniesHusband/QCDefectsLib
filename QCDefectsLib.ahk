@@ -18,6 +18,15 @@ Global TAB_APP    := "Approvals"
 Global TAB_CINFO  := "Closing Info"
 Global TAB_RES    := "Resolution"
 Global TAB_TCOM   := "Test Comments"
+
+Global ASSIGNED_TO_VERSION     := "WSAW130"
+Global PLANNED_CLOSING_VERSION = %ASSIGNED_TO_VERSION%.S2.L3.01   ; changes per sprint/build
+Global TARGET_TEST_CYCLE       := "Sprint 2" ; changes per sprint
+Global STATUS                  := "Fixed"
+Global DEFECT_TYPE             := "Software:Code"
+Global ROOT_CAUSE_TEAM         := "WSAW-Dev"
+Global RESOLUTION              := "UT:{SPACE}Y{RETURN}UT Passed:{SPACE}Y{RETURN}Cause:{SPACE}{RETURN}Resolution:{SPACE}"
+Global DEFECT_PREFIX           := "QC-CD "
 ;-----------------------------
 ; END Customizable section
 ;-----------------------------
@@ -184,4 +193,39 @@ FindDefect(defectNum)
    Sleep, STEP_SLEEP
 
    SendInput, %defectNum%{ENTER}
+}
+
+;----------------------------------------------------------------------------------------------------
+; Function: FixDefect
+;
+; Parameters:
+;  pcv   =  Planned closing Version (e.g., WSAW1380.S3.L3.01)
+;  ttc   =  Target test cycle (e.g., Sprint 1)
+;  atv   =  Assigned to version (e.g., WSAW1380)
+;----------------------------------------------------------------------------------------------------
+FixDefect(pcv, ttc, atv)
+{
+   ; Wait for the Defect Details dialog
+   WaitForDefectDlg()
+
+   ; Double-click to 
+   d := ClipDefectNumber()
+
+   ; formulate a string we can put in cvs comments
+   clipboard=%DEFECT_PREFIX%%d% 
+
+   ; Details tab
+   SetDefectStatus(STATUS)
+   SetAssignedToVersion(%atv%)
+
+   ; Additional Info tab
+   SetTargetTestCycle(%ttc%)
+   SetPlannedClosingVersion(%pcv%)
+
+   ; Closing Info tab
+   SetDefectType(DEFECT_TYPE)
+   SetRootCauseTeam(ROOT_CAUSE_TEAM)
+
+   ; Resolution tab
+   SetResolution(RESOLUTION)
 }
