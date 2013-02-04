@@ -1,32 +1,38 @@
+#SingleInstance force
+
 ;-----------------------------
 ; Customizable Values
 ;-----------------------------
 ; Stand-alone QC app title = "HP Application Lifecycle Management"
 ; Browser QC app title = "HP ALM - Quality Center 11.00" (NOTE: could vary by browser)
-Global QC_TITLE   := "HP Application Lifecycle Management"
+QC_TITLE   := "HP Application Lifecycle Management"
 
 ; How long to wait in between steps (in milliseconds)
-Global STEP_SLEEP := 800
+STEP_SLEEP := 800
 
-; Defect Details dialog name (should not vary)
-Global QC_DETAILS := "Defect Details"
+ASSIGNED_TO_VERSION     := "WSAW1380"                       ; changes per release
+PLANNED_CLOSING_VERSION  = %ASSIGNED_TO_VERSION%.HS.L6.01   ; changes per sprint/build
+TARGET_TEST_CYCLE       := "Sprint 4"                       ; changes per sprint
+STATUS                  := "Fixed"
+DEFECT_TYPE             := "Software:Code"
+ROOT_CAUSE_TEAM         := "WSAW-Dev"
+RESOLUTION              := "UT:{SPACE}Y{RETURN}UT Passed:{SPACE}Y{RETURN}Cause:{SPACE}{RETURN}Resolution:{SPACE}"
+DEFECT_PREFIX           := "QC-CD "
 
-; Tab names in the Defect Details dialog (should not vary)
-Global TAB_DET    := "Details"
-Global TAB_AINFO  := "Additional Info"
-Global TAB_APP    := "Approvals"
-Global TAB_CINFO  := "Closing Info"
-Global TAB_RES    := "Resolution"
-Global TAB_TCOM   := "Test Comments"
+;-----------------------------------------
+; Customizable but probably will not vary
+;-----------------------------------------
+; Defect Details dialog name
+QC_DETAILS := "Defect Details"
 
-Global ASSIGNED_TO_VERSION     := "WSAW130"
-Global PLANNED_CLOSING_VERSION = %ASSIGNED_TO_VERSION%.S2.L3.01   ; changes per sprint/build
-Global TARGET_TEST_CYCLE       := "Sprint 2" ; changes per sprint
-Global STATUS                  := "Fixed"
-Global DEFECT_TYPE             := "Software:Code"
-Global ROOT_CAUSE_TEAM         := "WSAW-Dev"
-Global RESOLUTION              := "UT:{SPACE}Y{RETURN}UT Passed:{SPACE}Y{RETURN}Cause:{SPACE}{RETURN}Resolution:{SPACE}"
-Global DEFECT_PREFIX           := "QC-CD "
+; Tab names in the Defect Details dialog
+TAB_DET    := "Details"
+TAB_AINFO  := "Additional Info"
+TAB_APP    := "Approvals"
+TAB_CINFO  := "Closing Info"
+TAB_RES    := "Resolution"
+TAB_TCOM   := "Test Comments"
+
 ;-----------------------------
 ; END Customizable section
 ;-----------------------------
@@ -35,16 +41,16 @@ Global DEFECT_PREFIX           := "QC-CD "
 
 WaitForQCMain()
 {
-   WinWait, %QC_TITLE%
-   IfWinNotActive, %QC_TITLE%, , WinActivate, %QC_TITLE%, 
-   WinWaitActive, %QC_TITLE%, 
+   WinWait % QC_TITLE
+   IfWinNotActive % QC_TITLE, , WinActivate, QC_TITLE, 
+   WinWaitActive % QC_TITLE, 
 }
 
 WaitForDefectDlg()
 {
-   WinWait, %QC_DETAILS%
-   IfWinNotActive, %QC_DETAILS%, , WinActivate, %QC_DETAILS%, 
-   WinWaitActive, %QC_DETAILS%, 
+   WinWait % QC_DETAILS
+   IfWinNotActive % QC_DETAILS, , WinActivate, QC_DETAILS, 
+   WinWaitActive % QC_DETAILS, 
 }
 
 ClipDefectNumber()
@@ -219,7 +225,7 @@ FixDefect(pcv, ttc, atv)
    SetAssignedToVersion(%atv%)
 
    ; Additional Info tab
-   SetTargetTestCycle(%ttc%)
+   SetTargetTestCycle(ttc)
    SetPlannedClosingVersion(%pcv%)
 
    ; Closing Info tab

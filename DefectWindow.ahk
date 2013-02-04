@@ -3,9 +3,6 @@
 ;-----------------------------
 ; Customizable Values
 ;-----------------------------
-ASSIGNED_TO_VERSION:="WSAW1380"
-PLANNED_CLOSING_VERSION=%ASSIGNED_TO_VERSION%.S2.L3.01 ; see sandy for this arbitrary made-up number!!
-TARGET_TEST_CYCLE:="Sprint 2" ; Marketing's S14 is our WSAW1360.S3
 RETURNED_STATUS:="Returned"
 RETURNED_TEAM_ASSIGNED:="WSAW-SQA-Testing"
 ;-----------------------------
@@ -14,10 +11,15 @@ RETURNED_TEAM_ASSIGNED:="WSAW-SQA-Testing"
 
 #Include QCDefectsLib.ahk
 
+Global ASSIGNED_TO_VERSION
+Global PLANNED_CLOSING_VERSION
+Global TARGET_TEST_CYCLE
+Global QC_DETAILS
+
 ; Wait for the Defect Details dialog
-WinWait, Defect Details, 
-IfWinNotActive, Defect Details, , WinActivate, Defect Details, 
-WinWaitActive, Defect Details, 
+WinWait % QC_DETAILS
+IfWinNotActive % QC_DETAILS,, WinActivate, QC_DETAILS, 
+WinWaitActive % QC_DETAILS, 
 
 ; create the GUI
 Gui, +AlwaysOnTop
@@ -72,7 +74,7 @@ return
 ;---------------------------------------------------------------------------------------------------
 ButtonMarkAsFixed:
 Gui, Submit
-Run, AutoHotkey.exe FixDefect.ahk %PlannedClosingVersion% "%TARGET_TEST_CYCLE%" %ASSIGNED_TO_VERSION%
+FixDefect(PLANNED_CLOSING_VERSION, TARGET_TEST_CYCLE, ASSIGNED_TO_VERSION)
 ExitApp
 return
 
