@@ -3,7 +3,6 @@ BL981	BL981	Welcome center easy click buttons
 BL1124	BL1124	Edit email ability
 BL1107	BL1107	Turn off auto zoom
 BL1191	BL1191	Read URL locale
-BL1234	[artf123456]	Test backlog svn story
 .
 .
 .

@@ -1,11 +1,61 @@
 #SingleInstance force
-#Include QCD_Config.ahk
+
+;=============================================================================================================================
+; BEGIN Customizable Values Section
+;=============================================================================================================================
+
+; Set the appropriate app title
+QC_TITLE                 = HP Application Lifecycle Management ; for stand-alone QC app
+;QC_TITLE                = HP ALM - Quality Center 11.00       ; for browser QC app
+
+ASSIGNED_TO_VERSION     := "WSAW1380"                       ; changes per release
+PLANNED_CLOSING_VERSION  = %ASSIGNED_TO_VERSION%.HS.L6.02   ; changes per sprint/build
+TARGET_TEST_CYCLE       := "Sprint 4"                       ; changes per sprint
+DEFECT_PREFIX           := "QC-CD "
+
+; How long to wait in between execution steps (in milliseconds)
+STEP_SLEEP             := 800
+; File name for the employee names, #'s, workgroups that you might want to reassign/return a defect to.
+EMP_NUMS_FILENAME      := "empNums.txt"
+; File name for the list of artifacts/stories that you are currently working on and would commit changes to.
+ARTIFACTS_FILENAME     := "artifacts.txt"
+; Default artifact you would like selected for every commit. Leave empty to force a manual choice.
+DEFAULT_ARTIFACT       := ""
+
+;------------------------------------------
+; Customizable but, probably will not vary
+;------------------------------------------
+DEFECT_TYPE            := "Software:Code"
+ROOT_CAUSE_TEAM        := "WSAW-Dev"
+RETURNED_TEAM_ASSIGNED := "WSAW-SQA-Testing"
+FIXED_STATUS           := "Fixed"
+RETURNED_STATUS        := "Returned"
+RESOLUTION             := "UT:{SPACE}Y{RETURN}UT Passed:{SPACE}Y{RETURN}Cause:{SPACE}{RETURN}Resolution:{SPACE}"
+
+; These are titles of windows that we need to watch for and take action on
+POP_DEF_DETAILS        := "Defect Details"
+POP_COMMIT             := "Commit"
+
+; Defect Details dialog tab names
+TAB_DET                := "Details"
+TAB_AINFO              := "Additional Info"
+TAB_APP                := "Approvals"
+TAB_CINFO              := "Closing Info"
+TAB_RES                := "Resolution"
+TAB_TCOM               := "Test Comments"
+
+; QCDefectsLib icon.  Change this to whatever icon you want to use or comment it out for default AutoHotKey icon
+Menu, Tray, Icon, Plog.ico
+
+;=============================================================================================================================
+; END Customizable Values Section
+;=============================================================================================================================
 
 ;******************************************************************************************************************************
 ; BEGIN Main program body
 ;******************************************************************************************************************************
 
-SetTitleMatchMode, 3
+SetTitleMatchMode, 3 ; 3=Match title exactly
 
 ; Add the variable defined above into the group of windows to wait for
 GroupAdd, waitOnThese, %POP_DEF_DETAILS%
@@ -309,20 +359,22 @@ LaunchDefectActionWindow()
    Gui, Add, Button, , Close All
 
    ; populate employee numbers
-   Loop, read, EMP_NUMS_FILENAME
+   Loop, read, %EMP_NUMS_FILENAME%
    {
       GuiControl,, lbEmpNums, %A_LoopReadLine%        
    }
 
+   Local X, Y, W, H
+
    ; Get the size of the defect details dialog
-   WinGetPos, XPOS, YPOS, WIDTH, HEIGHT, POP_DEF_DETAILS
+   WinGetPos, X,Y,W,H, %POP_DEF_DETAILS%
 
    ; Compute where and how big we want the defect window to be
-   XPOS   := XPOS + WIDTH
-   HEIGHT := HEIGHT - 32
+   X := X + W
+   H := H - 32
 
-   ; Show the defect action window
-   Gui, Show, x%XPOS% y%YPOS% w220 h%HEIGHT%, Defect Action
+   ; Show the artifact picker window
+   Gui, Show, x%X% y%Y% h%H%, Defect Action
 
    ; Gui gone, return from this function
    Return
@@ -389,9 +441,9 @@ LaunchArtifactPicker()
    Global
 
    Gui, +AlwaysOnTop
-   Gui, Add, Text,, Select artifact
+   Gui, Add, Text,, Select the story for this commit.
    Gui, Add, ListBox, vlbArtifacts glbArtifacts r7 w400
-   Gui, Add, Button, , Change
+   Gui, Add, Button, , Select
    Gui, Add, Button, , Exit
 
    Loop, read, %ARTIFACTS_FILENAME%
@@ -417,7 +469,7 @@ LaunchArtifactPicker()
    WinGetPos, X,Y,W,H, %POP_COMMIT%
 
    ; Show the artifact picker window
-   Gui, Show, x%X% y%Y% w%W% h%H%, Artifacts
+   Gui, Show, x%X% y%Y% w%W% h%H%, Artifact Picker
 
    ; Gui gone, return from this function
    Return
@@ -434,9 +486,9 @@ LaunchArtifactPicker()
       Return
 
    ;-------------------------------------------
-   ; Fall through - treat doubleclick as Change
+   ; Fall through - treat doubleclick as Select
    ;-------------------------------------------
-   ButtonChange:
+   ButtonSelect:
       GuiControlGet, lbArtifacts ; retrieve the listbox's current selection
       StringSplit, ArtData, lbArtifacts, %A_Tab%
       Gui, Destroy
@@ -456,9 +508,10 @@ LaunchArtifactPicker()
    Return
 }
 
-;----------------------------------------------------------
+;------------------------------------------------------------
+; Global Handlers
 ; Handle the closing of any launched window or hitting escape
-;----------------------------------------------------------
+;------------------------------------------------------------
 GuiClose:
 GuiEscape:
    Gui, Destroy
