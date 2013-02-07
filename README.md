@@ -22,7 +22,7 @@ You can run ProCease by running the ProCease.ahk file or put a link to it in you
 ProCease is built upon an API that can be modified to suit your needs.  Here are the existing API (function) calls that can
 be made and their descriptions.
 
->####Parameter Type Explanation
+####Parameter Type Explanation
 AEV - AutoHotkey Expression Variable _(e.g., THIS_VARIABLE) (no percentage signs necessary)_
 TV - AutoHotkey Tradtional Variable _(e.g., %SOME_VARIABLE%)_
 - - - 
