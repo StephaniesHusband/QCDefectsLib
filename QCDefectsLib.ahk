@@ -5,31 +5,33 @@
 ;=============================================================================================================================
 
 ; Set the appropriate app title
-QC_TITLE                 = HP Application Lifecycle Management ; for stand-alone QC app
-;QC_TITLE                = HP ALM - Quality Center 11.00       ; for browser QC app
+QC_TITLE                = HP Application Lifecycle Management ; for stand-alone QC app
+;QC_TITLE               = HP ALM - Quality Center 11.00       ; for browser QC app
 
-ASSIGNED_TO_VERSION     := "WSAW1380"                       ; changes per release
-PLANNED_CLOSING_VERSION  = %ASSIGNED_TO_VERSION%.HS.L6.02   ; changes per sprint/build
-TARGET_TEST_CYCLE       := "Sprint 4"                       ; changes per sprint
-DEFECT_PREFIX           := "QC-CD "
+VER_ASSIGNED_TO        := "WSAW1380"                       ; changes per release
+VER_PLANNED_CLOSING     = %VER_ASSIGNED_TO%.HS.L6.02   ; changes per sprint/build
+TARGET_TEST_CYCLE      := "Sprint 4"                       ; changes per sprint
+DEFECT_PREFIX          := "QC-CD "
 
 ; How long to wait in between execution steps (in milliseconds)
 STEP_SLEEP             := 800
 ; File name for the employee names, #'s, workgroups that you might want to reassign/return a defect to.
-EMP_NUMS_FILENAME      := "empNums.txt"
+FILE_EMPLOYEE_IDS      := "empNums.txt"
 ; File name for the list of artifacts/stories that you are currently working on and would commit changes to.
-ARTIFACTS_FILENAME     := "artifacts.txt"
+FILE_ARTIFACTS         := "artifacts.txt"
 ; Default artifact you would like selected for every commit. Leave empty to force a manual choice.
 DEFAULT_ARTIFACT       := ""
 
 ;------------------------------------------
 ; Customizable but, probably will not vary
 ;------------------------------------------
+TEAM_ROOT_CAUSE        := "WSAW-Dev"
+TEAM_RETURNED          := "WSAW-SQA-Testing"
+
+STATUS_FIXED           := "Fixed"
+STATUS_RETURNED        := "Returned"
+
 DEFECT_TYPE            := "Software:Code"
-ROOT_CAUSE_TEAM        := "WSAW-Dev"
-RETURNED_TEAM_ASSIGNED := "WSAW-SQA-Testing"
-FIXED_STATUS           := "Fixed"
-RETURNED_STATUS        := "Returned"
 RESOLUTION             := "UT:{SPACE}Y{RETURN}UT Passed:{SPACE}Y{RETURN}Cause:{SPACE}{RETURN}Resolution:{SPACE}"
 
 ; These are titles of windows that we need to watch for and take action on
@@ -325,8 +327,8 @@ FixDefect(pcv, ttc, atv)
    Clipboard=%DEFECT_PREFIX%%d% 
 
    ; Details tab
-   SetDefectStatus(FIXED_STATUS)
-   SetAssignedToVersion(%atv%)
+   SetDefectStatus(STATUS_FIXED)
+   SetAssignedToVersion(atv)
 
    ; Additional Info tab
    SetTargetTestCycle(ttc)
@@ -334,7 +336,7 @@ FixDefect(pcv, ttc, atv)
 
    ; Closing Info tab
    SetDefectType(DEFECT_TYPE)
-   SetRootCauseTeam(ROOT_CAUSE_TEAM)
+   SetRootCauseTeam(TEAM_ROOT_CAUSE)
 
    ; Resolution tab
    SetResolution(RESOLUTION)
@@ -352,14 +354,14 @@ LaunchDefectActionWindow()
    Gui, Add, Text,, Select an employee to`nreassign this defect to.
    Gui, Add, ListBox, vlbEmpNums glbEmpNums r6 w200
    Gui, Add, Text,, Planned Closing Version:
-   Gui, Add, Edit, r1 vPlannedClosingVersion, %PLANNED_CLOSING_VERSION%
+   Gui, Add, Edit, r1 vPlannedClosingVersion, %VER_PLANNED_CLOSING%
    Gui, Add, Button, , Mark As Fixed
    Gui, Add, Button, Default, Reassign
    Gui, Add, Button, , Return It
    Gui, Add, Button, , Close All
 
    ; populate employee numbers
-   Loop, read, %EMP_NUMS_FILENAME%
+   Loop, read, %FILE_EMPLOYEE_IDS%
    {
       GuiControl,, lbEmpNums, %A_LoopReadLine%        
    }
@@ -411,15 +413,15 @@ LaunchDefectActionWindow()
       Gui, Destroy
       WaitFor(POP_DEF_DETAILS)
 
-      FixDefect(PLANNED_CLOSING_VERSION, TARGET_TEST_CYCLE, ASSIGNED_TO_VERSION)
+      FixDefect(VER_PLANNED_CLOSING, TARGET_TEST_CYCLE, VER_ASSIGNED_TO)
    Return
 
    ;---------------
    ; Return handler
    ;---------------
    ButtonReturnIt:
-      SetDefectStatus(%RETURNED_STATUS%)
-      SetTeamAssigned(RETURNED_TEAM_ASSIGNED)
+      SetDefectStatus(%STATUS_RETURNED%)
+      SetTeamAssigned(TEAM_RETURNED)
       ClickOk()
       Gui, Destroy
    Return
@@ -446,7 +448,7 @@ LaunchArtifactPicker()
    Gui, Add, Button, , Select
    Gui, Add, Button, , Exit
 
-   Loop, read, %ARTIFACTS_FILENAME%
+   Loop, read, %FILE_ARTIFACTS%
    {
       StringLeft, outL, A_LoopReadLine, 1
       If (outL != ";")
